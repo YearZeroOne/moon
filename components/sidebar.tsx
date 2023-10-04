@@ -21,6 +21,8 @@ import {
   MenuItem,
   MenuList,
   Show,
+  useColorMode,
+  Button,
 } from "@chakra-ui/react";
 import {
   FaHome,
@@ -135,6 +137,8 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 };
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+  const { colorMode, toggleColorMode } = useColorMode();
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -210,6 +214,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <MenuItem>Billing</MenuItem>
               <MenuDivider />
               <MenuItem>Sign out</MenuItem>
+              <Button onClick={toggleColorMode}>
+        Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
+      </Button>
             </MenuList>
           </Menu>
         </Flex>
