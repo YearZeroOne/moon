@@ -23,16 +23,20 @@ export default function RootLayout({
     pathname.startsWith("/auth/login") ||
     pathname.startsWith("/auth/forgotPassword") ||
     pathname.startsWith("/auth/register");
+
   return (
     <html lang="en">
       <body className={inter.className}>
+  
         <Providers>
           {isAuthPath ? (
             children
           ) : (
-            <SidebarWithHeader>{children}</SidebarWithHeader>
+            <SidebarWithHeader>{children}
+            </SidebarWithHeader>
           )}
         </Providers>
+    
       </body>
     </html>
   );
