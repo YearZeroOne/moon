@@ -12,6 +12,7 @@ import {
   Heading,
   Text,
   useColorModeValue,
+  Link,
 } from "@chakra-ui/react";
 
 export default function ForgotPassword() {
@@ -52,6 +53,8 @@ export default function ForgotPassword() {
                 Reset
               </Button>
             </Stack>
+            <Link href="/auth/login" color={"blue.400"}>Go back to login</Link>
+
           </Stack>
         </Box>
       </Stack>

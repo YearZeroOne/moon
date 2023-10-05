@@ -10,11 +10,47 @@ import {
   Stack,
   Button,
   Heading,
-  Text,
   useColorModeValue,
+  Link,
+  Spinner,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
+import PocketBase from "pocketbase";
+import { useState } from "react";
 
 export default function Login() {
+  const pb = new PocketBase("http://127.0.0.1:8090");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const handleEmailChange = (event: any) => {
+    setEmail(event.target.value);
+  };
+  const handlePasswordChange = (event: any) => {
+    setPassword(event.target.value);
+  };
+  const loginUser = async () => {
+    setLoading(true);
+
+    try {
+      await pb.collection("users").authWithPassword(email, password);
+      // after the above you can also access the auth data from the authStore
+      console.log(pb.authStore.isValid);
+      console.log(pb.authStore.token);
+
+      // "logout" the last authenticated account
+      pb.authStore.clear();
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setError(true);
+      setLoading(false);
+    }
+  };
+
   return (
     <Flex
       minH={"100vh"}
@@ -26,20 +62,37 @@ export default function Login() {
         <Stack align={"center"}>
           <Heading fontSize={"4xl"}>Sign in</Heading>
         </Stack>
+
         <Box
           rounded={"lg"}
           bg={useColorModeValue("white", "gray.700")}
           boxShadow={"lg"}
           p={8}
         >
+          {error && (
+            <>
+              <Alert status="error">
+                <AlertIcon />
+                There was an error processing your request
+              </Alert>
+              <br />
+            </>
+          )}
+
           <Stack spacing={4}>
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+              <Input
+                type="email"
+                onChange={(event: any) => handleEmailChange(event)}
+              />
             </FormControl>
             <FormControl id="password">
               <FormLabel>Password</FormLabel>
-              <Input type="password" />
+              <Input
+                type="password"
+                onChange={(event: any) => handlePasswordChange(event)}
+              />
             </FormControl>
             <Stack spacing={10}>
               <Stack
@@ -48,7 +101,9 @@ export default function Login() {
                 justify={"space-between"}
               >
                 <Checkbox>Remember me</Checkbox>
-                <Text color={"blue.400"}>Forgot password?</Text>
+                <Link href="/auth/forgotPassword" color={"blue.400"}>
+                  Forgot password?
+                </Link>
               </Stack>
               <Button
                 bg={"blue.400"}
@@ -56,12 +111,15 @@ export default function Login() {
                 _hover={{
                   bg: "blue.500",
                 }}
+                onClick={loginUser}
               >
-                Sign in
+                {loading ? <Spinner /> : "Sign in"}
               </Button>
             </Stack>
             <Stack>
-                <p>Don't have an account yet?</p>
+              <Link color={"blue.400"} href="/auth/register">
+                Don't have an account yet?
+              </Link>
             </Stack>
           </Stack>
         </Box>
