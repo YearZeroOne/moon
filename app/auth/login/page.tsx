@@ -16,9 +16,8 @@ import {
   Alert,
   AlertIcon,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import PocketBase from "pocketbase";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Login() {
   const pb = new PocketBase("http://127.0.0.1:8090");
@@ -35,25 +34,17 @@ export default function Login() {
   };
   const loginUser = async () => {
     setLoading(true);
-    const router = useRouter();
 
     try {
       await pb.admins.authWithPassword(email, password);
+
       // after the above you can also access the auth data from the authStore
       console.log(pb.authStore.isValid);
       console.log(pb.authStore.token);
+      document.cookie = pb.authStore.exportToCookie({ httpOnly: false });
 
-      useEffect(() => {
-        if (pb.authStore.isValid) {
-          router.push("/");
-        }
-        else{
-          router.push("/auth/login")
-
-        }
-      }, [router]);
       // "logout" the last authenticated account
-      pb.authStore.clear();
+      // pb.authStore.clear();
 
       setLoading(false);
     } catch (error) {
