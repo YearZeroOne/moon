@@ -1,14 +1,23 @@
+import Logout from "@/components/logout";
+import db from "@/db";
+import { cookies } from "next/headers";
+import { use } from "react";
+const getUser = async () => {
+  const cookieStore = cookies();
 
-'use client'
+  const result = await db.getUser(cookieStore);
 
+  return result as any;
+}
 export default function Home() {
+  const user = use(getUser())
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <h1>Hello World</h1>
-       
-      </div>
-    </main>
-  )
+    <main>
+    <h1>Home</h1>
+
+    <p>Hi, {user?.username}</p>
+
+  </main>
+  );
 }

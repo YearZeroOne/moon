@@ -3,10 +3,10 @@ import type { NextRequest } from 'next/server'
 import db from './db';
 
 export async function middleware(request: NextRequest) {
-
+  
   const isLoggedIn = await db.isAuthenticated(request.cookies as any);
   if (request.nextUrl.pathname && request.nextUrl.pathname.startsWith("/auth")) {
-  if (isLoggedIn) {
+    if (isLoggedIn) {
     return NextResponse.redirect(new URL("/", request.url));
   }
   return;

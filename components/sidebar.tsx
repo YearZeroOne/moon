@@ -34,7 +34,6 @@ import {
   FaAngleDown,
   FaBars,
 } from "react-icons/fa";
-
 // import {
 //   FiHome,
 //   FiTrendingUp,
@@ -46,7 +45,7 @@ import {
 //   FiChevronDown,
 // } from 'react-icons/fi'
 import { IconType } from "react-icons";
-
+import Logout from "./logout";
 interface LinkItemProps {
   name: string;
   icon: IconType;
@@ -212,11 +211,13 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <MenuItem>Profile</MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
+              <MenuItem>Sign Out</MenuItem>
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
               <Button onClick={toggleColorMode}>
-        Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-      </Button>
+                Toggle {colorMode === "light" ? "Dark" : "Light"}
+              </Button>
+              <Logout />
+
             </MenuList>
           </Menu>
         </Flex>

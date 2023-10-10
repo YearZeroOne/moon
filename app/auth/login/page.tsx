@@ -36,6 +36,8 @@ export default function Login() {
  
 
   const onSubmit = async () => {    
+    setLoading(true);
+    setError(false);
     try {
         const form = {email, password};
         const response = await fetch('/api/auth/login', {
@@ -44,17 +46,24 @@ export default function Login() {
             body: JSON.stringify(form)
         });
         if (!response.ok) {
-            console.log('Failed to authenticate user');
+            setError(true);
+            setLoading(false);
             return;
         };
         const data = await response.json();
         if (data?.token) {
-            route.push('/auth/login');
+            route.push('/');
+            setLoading(false);
+
         } else {
-            console.log('Failed to authenticate user');
+            setError(true);
+            setLoading(false);
+
         }
     } catch (err) {
-        console.log('Failed to authenticate user');
+        setError(true);
+        setLoading(false);
+        console.log(err)
     }
 };
 
