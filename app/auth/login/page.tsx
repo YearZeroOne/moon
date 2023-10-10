@@ -16,11 +16,12 @@ import {
   Alert,
   AlertIcon,
 } from "@chakra-ui/react";
-import PocketBase from "pocketbase";
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
-  const pb = new PocketBase("http://127.0.0.1:8090");
+  const route = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,27 +33,33 @@ export default function Login() {
   const handlePasswordChange = (event: any) => {
     setPassword(event.target.value);
   };
-  const loginUser = async () => {
-    setLoading(true);
+ 
 
+  const onSubmit = async () => {    
     try {
-      await pb.admins.authWithPassword(email, password);
-
-      // after the above you can also access the auth data from the authStore
-      console.log(pb.authStore.isValid);
-      console.log(pb.authStore.token);
-      document.cookie = pb.authStore.exportToCookie({ httpOnly: false });
-
-      // "logout" the last authenticated account
-      // pb.authStore.clear();
-
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setError(true);
-      setLoading(false);
+        const form = {email, password};
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(form)
+        });
+        if (!response.ok) {
+            console.log('Failed to authenticate user');
+            return;
+        };
+        const data = await response.json();
+        if (data?.token) {
+            route.push('/auth/login');
+        } else {
+            console.log('Failed to authenticate user');
+        }
+    } catch (err) {
+        console.log('Failed to authenticate user');
     }
-  };
+};
+
+
+
 
   return (
     <Flex
@@ -61,6 +68,7 @@ export default function Login() {
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
     >
+  
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"}>Sign in</Heading>
@@ -113,7 +121,7 @@ export default function Login() {
                 _hover={{
                   bg: "blue.500",
                 }}
-                onClick={loginUser}
+                onClick={onSubmit}
               >
                 {loading ? <Spinner /> : "Sign in"}
               </Button>

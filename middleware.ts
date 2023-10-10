@@ -1,39 +1,27 @@
-import { useSearchParams } from 'next/navigation';
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import PocketBase from "pocketbase";
+import db from './db';
 
-export function middleware(request: NextRequest) {
-    // const search_params = useSearchParams().get("next");
-    // const request_cookie = request.cookies.get("pocketbase_auth")
+export async function middleware(request: NextRequest) {
 
-    // const pb = new PocketBase("http://127.0.0.1:8090");
-    // if(request.nextUrl.pathname.startsWith('/orders')){
-    //     console.log("hello")
-    // if(pb.authStore.isValid){
-    //     return NextResponse.rewrite(new URL('/auth/login', request.url))
-
-    // }else{
-
-    //     return NextResponse.rewrite(new URL('/', request.url))
-
-    // }
-
-    if (request.nextUrl.pathname.startsWith('/orders')) {
-        return NextResponse.redirect(new URL('/auth/login', request.url))
-
-      }
-     
-    // || request.nextUrl.pathname.startsWith('/') || request.nextUrl.pathname.startsWith('/orders') || request.nextUrl.pathname.startsWith('/products')
-
-
-// }
-
-//   if (request.nextUrl.pathname.startsWith('/about')) {
-//     return NextResponse.rewrite(new URL('/about-2', request.url))
-//   }
- 
-//   if (request.nextUrl.pathname.startsWith('/dashboard')) {
-//     return NextResponse.rewrite(new URL('/dashboard/user', request.url))
-//   }
+  const isLoggedIn = await db.isAuthenticated(request.cookies as any);
+  if (request.nextUrl.pathname && request.nextUrl.pathname.startsWith("/auth")) {
+  if (isLoggedIn) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+  return;
 }
+if (!isLoggedIn) {
+  return NextResponse.redirect(new URL("/auth/login", request.url));
+}
+
+
+return NextResponse.next();
+
+}
+
+export const config = {
+  matcher: [
+      '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
+};
