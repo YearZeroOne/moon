@@ -1,4 +1,3 @@
-"use client";
 import {
   IconButton,
   Avatar,
@@ -46,6 +45,10 @@ import {
 // } from 'react-icons/fi'
 import { IconType } from "react-icons";
 import Logout from "./logout";
+import { use, useEffect, useState } from "react";
+import db from "@/db";
+import { cookies } from "next/headers";
+import { useRouter } from "next/router";
 interface LinkItemProps {
   name: string;
   icon: IconType;
@@ -136,7 +139,25 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 };
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+
   const { colorMode, toggleColorMode } = useColorMode();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/nav');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchData(); // This calls the fetchData function inside the useEffect
+  }, []); // Empty dependency array means this useEffect runs once when the component mounts
 
   return (
     <Flex
@@ -161,7 +182,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         <Flex h="20" alignItems="center" mx="8" gap={3}>
           <FaMoon display={{ base: "flex", md: "none" }} fontSize="24px" />
           <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-            Moon App
+            Moon App 
           </Text>
         </Flex>
       </Show>
