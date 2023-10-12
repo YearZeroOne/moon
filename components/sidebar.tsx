@@ -45,10 +45,8 @@ import {
 // } from 'react-icons/fi'
 import { IconType } from "react-icons";
 import Logout from "./logout";
-import { use, useEffect, useState } from "react";
-import db from "@/db";
-import { cookies } from "next/headers";
-import { useRouter } from "next/router";
+import {  useEffect, useState } from "react";
+
 interface LinkItemProps {
   name: string;
   icon: IconType;
@@ -141,24 +139,29 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 
   const { colorMode, toggleColorMode } = useColorMode();
-
+  const [user, setUser] = useState<any>({});
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/nav');
+        const response = await fetch('/api/user');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
+        const newData = {
+          username: data.username,
+          name: data.name,
+          email: data.email,
+        
+        };
+        setUser(newData)
         console.log(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-
-    fetchData(); // This calls the fetchData function inside the useEffect
-  }, []); // Empty dependency array means this useEffect runs once when the component mounts
-
+    fetchData();
+  }, []); 
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -188,13 +191,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       </Show>
 
       <HStack spacing={{ base: "0", md: "6" }}>
-        <IconButton
-          size="lg"
-          variant="ghost"
-          aria-label="open menu"
-          icon={<FaRegBell />}
-        />
-
         <Flex alignItems={"center"}>
           <Menu>
             <MenuButton
@@ -203,19 +199,13 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                <Avatar
-                  size={"sm"}
-                  src={
-                    "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                  }
-                />
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{user?.username}</Text>
                   <Text fontSize="xs" color="gray.600">
                     Admin
                   </Text>
@@ -232,11 +222,10 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <MenuItem>Profile</MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
-              <MenuItem>Sign Out</MenuItem>
-              <MenuDivider />
-              <Button onClick={toggleColorMode}>
+              <MenuItem onClick={toggleColorMode}>
                 Toggle {colorMode === "light" ? "Dark" : "Light"}
-              </Button>
+              </MenuItem>
+              <MenuDivider />
               <Logout />
 
             </MenuList>

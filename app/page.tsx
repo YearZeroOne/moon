@@ -1,21 +1,17 @@
-import db from "@/db";
-import { cookies } from "next/headers";
-import { use } from "react";
-const getUser = async () => {
-  const cookieStore = cookies();
+import PocketBase from 'pocketbase';
+import { POCKET_BASE_URL } from '@/db';
+import CategoryGrid from '@/components/category/categoryGrid';
+async function getProducts() {
+  const pb = new PocketBase(POCKET_BASE_URL);
 
-  const result = await db.getUser(cookieStore);
+  const records = await pb.collection('Categories').getFullList({
+    sort: '-created',
+});
+return records;
 
-  return result as any;
+
 }
-export default function Home() {
-  const user = use(getUser())
-  return (
-    <main>
-    <h1>Home</h1>
-
-    <p>Hi, {user?.username}</p>
-
-  </main>
-  );
+export default async function Home() {
+  const data = await getProducts();
+  return <CategoryGrid categories={data} />;
 }
