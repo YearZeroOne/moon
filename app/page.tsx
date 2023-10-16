@@ -13,5 +13,6 @@ return records;
 }
 export default async function Home() {
   const data = await getProducts();
+  console.log(data)
   return <CategoryGrid categories={data} />;
 }

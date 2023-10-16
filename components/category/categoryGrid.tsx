@@ -3,10 +3,6 @@
 import { SimpleGrid } from '@chakra-ui/react';
 import CategoryCard from './categoryCard';
 
-type Props = {
-  categories: any[];  // or provide a specific type
-};
-
 
 export default function CategoryGrid({categories} : any) {
 return(

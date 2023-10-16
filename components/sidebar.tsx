@@ -1,6 +1,5 @@
 import {
   IconButton,
-  Avatar,
   Box,
   CloseButton,
   Flex,
@@ -22,6 +21,7 @@ import {
   Show,
   useColorMode,
   Button,
+  Link,
 } from "@chakra-ui/react";
 import {
   FaHome,
@@ -29,32 +29,23 @@ import {
   FaCartArrowDown,
   FaMoon,
   FaThList,
-  FaRegBell,
   FaAngleDown,
   FaBars,
 } from "react-icons/fa";
-// import {
-//   FiHome,
-//   FiTrendingUp,
-//   FiCompass,
-//   FiStar,
-//   FiSettings,
-//   FiMenu,
-//   FiBell,
-//   FiChevronDown,
-// } from 'react-icons/fi'
 import { IconType } from "react-icons";
 import Logout from "./logout";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface LinkItemProps {
   name: string;
   icon: IconType;
+  link: string;
 }
 
 interface NavItemProps extends FlexProps {
   icon: IconType;
   children: React.ReactNode;
+  to: string;
 }
 
 interface MobileProps extends FlexProps {
@@ -66,10 +57,10 @@ interface SidebarProps extends BoxProps {
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: "Home", icon: FaHome },
-  { name: "Products", icon: FaThList },
-  { name: "Orders", icon: FaCartArrowDown },
-  { name: "Invoices", icon: FaFileInvoiceDollar },
+  { name: "Home", icon: FaHome, link: "/" },
+  { name: "Products", icon: FaThList, link: "/products" },
+  { name: "Orders", icon: FaCartArrowDown, link: "/" },
+  { name: "Invoices", icon: FaFileInvoiceDollar, link: "/" },
 ];
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
@@ -92,21 +83,16 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem to={link.link} key={link.name} icon={link.icon}>
           {link.name}
         </NavItem>
       ))}
     </Box>
   );
 };
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, children, to, ...rest }: NavItemProps) => {
   return (
-    <Box
-      as="a"
-      href="#"
-      style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}
-    >
+    <Box as="a" href={to} _focus={{ boxShadow: "none" }}>
       <Flex
         align="center"
         p="4"
@@ -137,31 +123,29 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 };
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
-
   const { colorMode, toggleColorMode } = useColorMode();
   const [user, setUser] = useState<any>({});
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/user');
+        const response = await fetch("/api/user");
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         const data = await response.json();
         const newData = {
           username: data.username,
           name: data.name,
           email: data.email,
-        
         };
-        setUser(newData)
+        setUser(newData);
         console.log(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
     fetchData();
-  }, []); 
+  }, []);
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -185,7 +169,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         <Flex h="20" alignItems="center" mx="8" gap={3}>
           <FaMoon display={{ base: "flex", md: "none" }} fontSize="24px" />
           <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-            Moon App 
+            Moon App
           </Text>
         </Flex>
       </Show>
@@ -227,7 +211,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               </MenuItem>
               <MenuDivider />
               <Logout />
-
             </MenuList>
           </Menu>
         </Flex>
