@@ -1,7 +1,7 @@
 import PocketBase from 'pocketbase';
 import { POCKET_BASE_URL } from '@/db';
 import CategoryGrid from '@/components/category/categoryGrid';
-async function getProducts() {
+export async function getCategories() {
   const pb = new PocketBase(POCKET_BASE_URL);
 
   const records = await pb.collection('Categories').getFullList({
@@ -12,7 +12,7 @@ return records;
 
 }
 export default async function Home() {
-  const data = await getProducts();
+  const data = await getCategories();
   console.log(data)
   return <CategoryGrid categories={data} />;
 }

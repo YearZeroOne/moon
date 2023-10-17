@@ -7,8 +7,10 @@ import ProductListSearchTable from "@/components/productList/productListTable/pr
 
     const records = await pb.collection('Products').getFullList({
       sort: '-created',
-      cache: 'no-store' 
+      cache: 'no-store',
+      expand: 'category'
   });
+  
     return records;
 
   }

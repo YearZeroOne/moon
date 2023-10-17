@@ -9,10 +9,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
+import Products from "@/app/products/[id]/page";
 
 type Product = {
-  category: string;
-  collectionName: string;
+  expand: string;
   name: string;
   price: number;
 };
@@ -20,12 +20,10 @@ type Product = {
 const columnHelper = createColumnHelper<Product>();
 
 const columns = [
-  columnHelper.accessor("category", {
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("collectionName", {
-    cell: (info) => info.getValue(),
-  }),
+//   columnHelper.accessor("expand", {
+//     cell: (info) => info.getValue(),
+//   }),
+
   columnHelper.accessor("name", {
     cell: (info) => info.getValue(),
   }),
@@ -41,7 +39,7 @@ const columns = [
 ];
 
 export default function ProductListSearchTable({ products }: any) {
-
+console.log(products)
   const table = useReactTable({
     data: products,
     columns,
