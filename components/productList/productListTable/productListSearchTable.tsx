@@ -8,38 +8,68 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
-import Products from "@/app/products/[id]/page";
+import { useEffect } from "react";
 
 type Product = {
-  expand: string;
+  expand: {
+    category: {
+      category: string;
+      collectionId: string;
+      collectionName: string;
+      created: string;
+      id: string;
+      taxRate: number;
+      updated: string;
+    };  };
   name: string;
   price: number;
+  category: string;
 };
 
 const columnHelper = createColumnHelper<Product>();
 
 const columns = [
-//   columnHelper.accessor("expand", {
-//     cell: (info) => info.getValue(),
-//   }),
 
+  columnHelper.accessor("expand", {    
+    cell: (info) => {
+      const categoryName = info.row.original.expand.category.category;
+      return <span>{categoryName}</span>;
+    },
+  }),
   columnHelper.accessor("name", {
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("price", {
     cell: (info) => info.getValue(),
   }),
-  // you can use different aproach here
-//   columnHelper.accessor((row) => row.collectionName, {
-//     id: "c",
-//     cell: (info) => <i>{info.getValue()}</i>,
-//     header: () => <span>Email</span>,
-//   }),
 ];
 
 export default function ProductListSearchTable({ products }: any) {
-console.log(products)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/productList");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        const categories = data.map((product : any) => product.expand.category.category);
+
+        // setUser(newData);
+        console.log(categories)
+        console.log("hello", data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
+
+  
+// console.log(products)
   const table = useReactTable({
     data: products,
     columns,

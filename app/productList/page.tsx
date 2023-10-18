@@ -10,7 +10,7 @@ import ProductListSearchTable from "@/components/productList/productListTable/pr
       cache: 'no-store',
       expand: 'category'
   });
-  
+    
     return records;
 
   }

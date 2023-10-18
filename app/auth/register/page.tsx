@@ -15,58 +15,97 @@ import {
 import PocketBase from "pocketbase";
 import { useState } from "react";
 import * as yup from "yup";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
+  const route = useRouter();
+
   const pb = new PocketBase("http://127.0.0.1:8090");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   //  const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
-  const data = {
-    email: email,
-    password: password,
+  // const data = {
+  //   email: email,
+  //   password: password,
+  // };
+
+  // const validationSchema = yup.object().shape({
+  //   email: yup.string().email().required("companyRequired"),
+  //   password: yup.string().required("Password is required"),
+  //   passwordConfirmation: yup
+  //     .string()
+  //     .test("password-should-match", "Passwords must match", function (value) {
+  //       return this.parent.password === value;
+  //     }),
+  // });
+
+  // const [eachFieldStateValidation, setEachFieldStateValidation] = useState({
+  //   email: { valid: true, error: "" },
+  //   password: { valid: true, error: "" },
+  //   passwordConfirmation: { valid: true, error: "" },
+  // });
+  // const validateSingleField = (path: string, input: any) => {
+  //   // `reach()` pulls out a child schema so we can test a single path
+  //   const field: any = yup.reach(validationSchema, path);
+
+  //   field
+  //     .validate(input)
+  //     .then(() =>
+  //       setEachFieldStateValidation({
+  //         ...eachFieldStateValidation,
+  //         [path]: { valid: true, error: "" },
+  //       })
+  //     ) // if valid set true
+  //     .catch((e: any) => {
+  //       console.log(e);
+  //       setEachFieldStateValidation({
+  //         ...eachFieldStateValidation,
+  //         [path]: { valid: false, error: e.errors.join(", ") },
+  //       });
+  //     }); // if invalid set false
+  // };
+
+  const handleEmailChange = (event: any) => {
+    setEmail(event.target.value);
+  };
+  const handlePasswordChange = (event: any) => {
+    setPassword(event.target.value);
   };
 
-  const validationSchema = yup.object().shape({
-    email: yup.string().email().required("companyRequired"),
-    password: yup.string().required("Password is required"),
-    passwordConfirmation: yup
-      .string()
-      .test("password-should-match", "Passwords must match", function (value) {
-        return this.parent.password === value;
-      }),
-  });
+  const onSubmit = async (event: any) => {
+    event.preventDefault();
 
-  const [eachFieldStateValidation, setEachFieldStateValidation] = useState({
-    email: { valid: true, error: "" },
-    password: { valid: true, error: "" },
-    passwordConfirmation: { valid: true, error: "" },
-  });
-  const validateSingleField = (path: string, input: any) => {
-    // `reach()` pulls out a child schema so we can test a single path
-    const field: any = yup.reach(validationSchema, path);
-
-    field
-      .validate(input)
-      .then(() =>
-        setEachFieldStateValidation({
-          ...eachFieldStateValidation,
-          [path]: { valid: true, error: "" },
-        })
-      ) // if valid set true
-      .catch((e: any) => {
-        console.log(e);
-        setEachFieldStateValidation({
-          ...eachFieldStateValidation,
-          [path]: { valid: false, error: e.errors.join(", ") },
-        });
-      }); // if invalid set false
-  };
-  const createUser = async () => {
     try {
-      await pb.collection("users").create(data);
-    } catch (error) {
-      console.log(error);
+      const form = { email, password };
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!response.ok) {
+        console.log("Failed to register user");
+        return;
+      }
+      const data = await response.json();
+      console.log(data);
+      try {
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+        const data = await response.json();
+
+        if (data?.token) {
+          route.push("/");
+        }
+      } catch (err) {
+        console.log(err)
+
+      }
+    } catch (err) {
+      setEmail("Failed to register user");
     }
   };
 
@@ -92,8 +131,8 @@ export default function Register() {
               <FormLabel>Email address</FormLabel>
               <Input
                 onChange={(event: any) => {
-                  setEmail(event.target.value);
-                  validateSingleField("email", event.target.value);
+                  handleEmailChange(event);
+                  // validateSingleField("email", event.target.value);
                 }}
                 type="email"
               />
@@ -103,8 +142,8 @@ export default function Register() {
               <Input
                 type="password"
                 onChange={(event: any) => {
-                  setPassword(event.target.value);
-                  validateSingleField("passowrd", event.target.value);
+                  handlePasswordChange(event);
+                  // validateSingleField("password", event.target.value);
                 }}
               />
             </FormControl>
@@ -113,7 +152,7 @@ export default function Register() {
               <Input
                 type="confirmPassword"
                 onChange={(event: any) => {
-                  validateSingleField("confirmPassword", event.target.value);
+                  // validateSingleField("confirmPassword", event.target.value);
                 }}
               />
             </FormControl>
@@ -124,6 +163,7 @@ export default function Register() {
                 _hover={{
                   bg: "blue.500",
                 }}
+                onClick={onSubmit}
               >
                 Sign up
               </Button>
