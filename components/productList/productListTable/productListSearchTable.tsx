@@ -30,7 +30,7 @@ const columnHelper = createColumnHelper<Product>();
 
 const columns = [
 
-  columnHelper.accessor("expand", {    
+  columnHelper.accessor("category", {    
     cell: (info) => {
       const categoryName = info.row.original.expand.category.category;
       return <span>{categoryName}</span>;
@@ -55,6 +55,7 @@ export default function ProductListSearchTable({ products }: any) {
         }
         const data = await response.json();
         const categories = data.map((product : any) => product.expand.category.category);
+        setData(data)
 
         // setUser(newData);
         console.log(categories)
@@ -68,10 +69,11 @@ export default function ProductListSearchTable({ products }: any) {
 
 
 
-  
+  const [data, setData] = React.useState(() => []);
+
 // console.log(products)
   const table = useReactTable({
-    data: products,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
