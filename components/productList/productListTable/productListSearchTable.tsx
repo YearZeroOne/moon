@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import * as React from "react";
 
@@ -9,6 +9,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useEffect } from "react";
+import { Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 
 type Product = {
   expand: {
@@ -20,17 +21,18 @@ type Product = {
       id: string;
       taxRate: number;
       updated: string;
-    };  };
+    };
+  };
   name: string;
   price: number;
   category: string;
+  action: string;
 };
 
 const columnHelper = createColumnHelper<Product>();
 
 const columns = [
-
-  columnHelper.accessor("category", {    
+  columnHelper.accessor("category", {
     cell: (info) => {
       const categoryName = info.row.original.expand.category.category;
       return <span>{categoryName}</span>;
@@ -42,10 +44,12 @@ const columns = [
   columnHelper.accessor("price", {
     cell: (info) => info.getValue(),
   }),
+  columnHelper.accessor("action", {
+    cell: (info) => info.getValue(),
+  }),
 ];
 
-export default function ProductListSearchTable({ products }: any) {
-
+export default function ProductListSearchTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,11 +58,12 @@ export default function ProductListSearchTable({ products }: any) {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        const categories = data.map((product : any) => product.expand.category.category);
-        setData(data)
+        const categories = data.map(
+          (product: any) => product.expand.category.category
+        );
+        setData(data);
 
-        // setUser(newData);
-        console.log(categories)
+        console.log(categories);
         console.log("hello", data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -67,11 +72,9 @@ export default function ProductListSearchTable({ products }: any) {
     fetchData();
   }, []);
 
-
-
   const [data, setData] = React.useState(() => []);
 
-// console.log(products)
+  // console.log(products)
   const table = useReactTable({
     data,
     columns,
@@ -80,42 +83,44 @@ export default function ProductListSearchTable({ products }: any) {
 
   return (
     <div className="flex justify-center h-screen">
-      <table className="my-auto border">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr
-              key={headerGroup.id}
-              className="border-b text-gray-800 uppercase"
-            >
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className="px-4 pr-2 py-4 font-medium text-left"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="border-b">
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="px-4 pt-[14px] pb-[18px]">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div />
+      <TableContainer  >
+        <Table variant="simple" className="bg-white" >
+          
+          <Thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Tr
+                key={headerGroup.id}
+                className="border-b text-gray-800 uppercase"
+              >
+                {headerGroup.headers.map((header) => (
+                  <Th
+                    key={header.id}
+                    className="px-4 pr-2 py-4 font-medium text-left"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </Th>
+                ))}
+              </Tr>
+            ))}
+          </Thead>
+          <Tbody>
+            {table.getRowModel().rows.map((row) => (
+              <Tr key={row.id} className="border-b">
+                {row.getVisibleCells().map((cell) => (
+                  <Td key={cell.id} className="px-4 pt-[14px] pb-[18px]">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Td>
+                ))}
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }
