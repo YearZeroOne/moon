@@ -9,7 +9,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useEffect } from "react";
-import { Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import { Text, Button, Card, Flex, Stack, Table, TableContainer, Tbody, Td, Th, Thead, Tr, Spacer } from "@chakra-ui/react";
 
 type Product = {
   expand: {
@@ -45,8 +45,44 @@ const columns = [
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("action", {
-    cell: (info) => info.getValue(),
-  }),
+    header: () => (
+      <div
+      >
+        action
+      </div>
+    ),
+    cell: () => (
+      <Stack direction="column" spacing="8px">
+        <Flex gap={1}>
+          <Button
+            size="sm"
+            cursor="pointer"
+            colorScheme="yellow"
+            fontSize="xs"
+            w={104}
+         
+          >
+            Edit
+          </Button>
+          <Button
+            size="sm"
+     
+            cursor="pointer"
+            colorScheme="red"
+            w={104}
+            fontSize="xs"
+          
+          >
+    Delete        
+</Button>
+        </Flex>
+        
+      </Stack>
+    ),
+
+    },
+  ),
+  
 ];
 
 export default function ProductListSearchTable() {
@@ -82,7 +118,53 @@ export default function ProductListSearchTable() {
   });
 
   return (
+
     <div className="flex justify-center h-screen">
+      <Card>
+        <Flex
+           flexDirection={{ sm: 'column', lg: 'row' }}
+           align={{ sm: 'flex-start', lg: 'center' }}
+           justify={{ sm: 'flex-start', lg: 'space-between' }}
+           w="100%"
+           px="22px"
+           mt="20px"
+           mb="10px"
+           minWidth="max-content"
+           gap="4"
+        >
+                <Button
+            size="sm"
+            cursor="pointer"
+            colorScheme="green"
+            fontSize="xs"
+            w={104}
+         
+          >
+            Refresh
+          </Button>     
+            <Spacer />
+          <Button
+            size="sm"
+            cursor="pointer"
+            colorScheme="green"
+            fontSize="xs"
+            w={104}
+         
+          >
+            Add Product
+          </Button>      
+          <Button
+            size="sm"
+            cursor="pointer"
+            colorScheme="blue"
+            fontSize="xs"
+            w={104}
+         
+          >
+            Add Category
+          </Button>     
+          
+          </Flex>
       <TableContainer  >
         <Table variant="simple" className="bg-white" >
           
@@ -110,7 +192,7 @@ export default function ProductListSearchTable() {
           </Thead>
           <Tbody>
             {table.getRowModel().rows.map((row) => (
-              <Tr key={row.id} className="border-b">
+              <Tr key={row.id} className="border">
                 {row.getVisibleCells().map((cell) => (
                   <Td key={cell.id} className="px-4 pt-[14px] pb-[18px]">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -121,6 +203,8 @@ export default function ProductListSearchTable() {
           </Tbody>
         </Table>
       </TableContainer>
+      </Card>
+
     </div>
   );
 }
