@@ -5,9 +5,9 @@ import { Card, CardBody, Heading, Stack, LinkBox, LinkOverlay } from '@chakra-ui
 export default function CategoryCard({categoryData }: any) {
     const { category, id} = categoryData || {};
   
-    return (
+    return (      <LinkBox as="article" maxW="sm">
+
       <Stack direction="column" gap="20px">
-      <LinkBox as="article" maxW="sm">
       <Card id={id} height="150px" width="170px" >
           <CardBody>
 
@@ -18,8 +18,9 @@ export default function CategoryCard({categoryData }: any) {
           </CardBody>
 
       </Card>
-  </LinkBox>
   </Stack>
+  </LinkBox>
+
 
     );
   }

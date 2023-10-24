@@ -9,14 +9,18 @@ export default function CategoryGrid({ categories }: any) {
       <Stack direction={['column', 'row']} spacing='24px'>
 
       <Box flex="1">
-        <SimpleGrid columns={{ base: 2, md: 2, lg: 1,}} spacing={10}>
+        <SimpleGrid columns={{ base: 2, md: 2, lg: 2,}} spacing={10}>
           {categories?.map((data: any) => (
             <CategoryCard key={data.id} categoryData={data} />
           ))}
         </SimpleGrid>
       </Box>
       <Box flex="1">
+      <SimpleGrid columns={{ base: 1, md: 1, lg: 1,}} spacing={10}>
+
         <ProductCartCard />
+        </SimpleGrid>
+
       </Box>
       </Stack>
   );
