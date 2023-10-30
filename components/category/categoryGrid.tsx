@@ -6,10 +6,10 @@ import ProductCartCard from './productCartCard';
 
 export default function CategoryGrid({ categories }: any) {
   return (
-      <Stack direction={['column', 'row']} spacing='24px'>
+      <Stack direction={['column', 'row']} spacing='10px'>
 
       <Box flex="1">
-        <SimpleGrid columns={{ base: 2, md: 2, lg: 2,}} spacing={10}>
+        <SimpleGrid columns={{ base: 2, md: 3, lg: 3, xl: 5}} spacing='10px' >
           {categories?.map((data: any) => (
             <CategoryCard key={data.id} categoryData={data} />
           ))}

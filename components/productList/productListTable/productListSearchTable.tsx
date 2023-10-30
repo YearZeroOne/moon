@@ -8,9 +8,24 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useEffect } from "react";
-import { Text, Button, Card, Flex, Stack, Table, TableContainer, Tbody, Td, Th, Thead, Tr, Spacer } from "@chakra-ui/react";
-
+import { useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  Flex,
+  Stack,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  Spacer,
+  Spinner,
+} from "@chakra-ui/react";
+import { useSelector, useDispatch } from "react-redux";
+import { setLoading } from "@/globalState/globalLoaderState";
 type Product = {
   expand: {
     category: {
@@ -45,12 +60,7 @@ const columns = [
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("action", {
-    header: () => (
-      <div
-      >
-        action
-      </div>
-    ),
+    header: () => <div>action</div>,
     cell: () => (
       <Stack direction="column" spacing="8px">
         <Flex gap={1}>
@@ -60,32 +70,29 @@ const columns = [
             colorScheme="yellow"
             fontSize="xs"
             w={104}
-         
           >
             Edit
           </Button>
           <Button
             size="sm"
-     
             cursor="pointer"
             colorScheme="red"
             w={104}
             fontSize="xs"
-          
           >
-    Delete        
-</Button>
+            Delete
+          </Button>
         </Flex>
-        
       </Stack>
     ),
-
-    },
-  ),
-  
+  }),
 ];
 
 export default function ProductListSearchTable() {
+  const isLoading = useSelector((state: any) => state.loader.isLoading);
+  const dispatch = useDispatch();
+  const [data, setData] = React.useState(() => []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -93,22 +100,20 @@ export default function ProductListSearchTable() {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        const data = await response.json();
-        const categories = data.map(
+        const res = await response.json();
+        const categories = res.map(
           (product: any) => product.expand.category.category
         );
-        setData(data);
+        setData(res);
 
         console.log(categories);
-        console.log("hello", data);
+        console.log("hello", res);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
     fetchData();
   }, []);
-
-  const [data, setData] = React.useState(() => []);
 
   // console.log(products)
   const table = useReactTable({
@@ -118,93 +123,90 @@ export default function ProductListSearchTable() {
   });
 
   return (
-
     <div className="flex justify-center h-screen">
       <Card>
         <Flex
-           flexDirection={{ sm: 'column', lg: 'row' }}
-           align={{ sm: 'flex-start', lg: 'center' }}
-           justify={{ sm: 'flex-start', lg: 'space-between' }}
-           w="100%"
-           px="22px"
-           mt="20px"
-           mb="10px"
-           minWidth="max-content"
-           gap="4"
+          flexDirection={{ sm: "column", lg: "row" }}
+          align={{ sm: "flex-start", lg: "center" }}
+          justify={{ sm: "flex-start", lg: "space-between" }}
+          w="100%"
+          px="22px"
+          mt="20px"
+          mb="10px"
+          minWidth="max-content"
+          gap="4"
         >
-                <Button
-            size="sm"
-            cursor="pointer"
-            colorScheme="green"
-            fontSize="xs"
-            w={104}
-         
-          >
-            Refresh
-          </Button>     
-            <Spacer />
           <Button
             size="sm"
             cursor="pointer"
             colorScheme="green"
             fontSize="xs"
             w={104}
-         
+          >
+            Refresh
+          </Button>
+
+          <Spacer />
+          <Button
+            size="sm"
+            cursor="pointer"
+            colorScheme="green"
+            fontSize="xs"
+            w={104}
           >
             Add Product
-          </Button>      
+          </Button>
           <Button
             size="sm"
             cursor="pointer"
             colorScheme="blue"
             fontSize="xs"
             w={104}
-         
           >
             Add Category
-          </Button>     
-          
-          </Flex>
-      <TableContainer  >
-        <Table variant="simple" className="bg-white" >
-          
-          <Thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Tr
-                key={headerGroup.id}
-                className="border-b text-gray-800 uppercase"
-              >
-                {headerGroup.headers.map((header) => (
-                  <Th
-                    key={header.id}
-                    className="px-4 pr-2 py-4 font-medium text-left"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </Th>
-                ))}
-              </Tr>
-            ))}
-          </Thead>
-          <Tbody>
-            {table.getRowModel().rows.map((row) => (
-              <Tr key={row.id} className="border">
-                {row.getVisibleCells().map((cell) => (
-                  <Td key={cell.id} className="px-4 pt-[14px] pb-[18px]">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Td>
-                ))}
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
+          </Button>
+        </Flex>
+        <TableContainer>
+          <Table variant="simple" className="bg-white">
+            <Thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <Tr
+                  key={headerGroup.id}
+                  className="border-b text-gray-800 uppercase"
+                >
+                  {headerGroup.headers.map((header) => (
+                    <Th
+                      key={header.id}
+                      className="px-4 pr-2 py-4 font-medium text-left"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </Th>
+                  ))}
+                </Tr>
+              ))}
+            </Thead>
+            <Tbody>
+              {table.getRowModel().rows.map((row) => (
+                <Tr key={row.id} className="border">
+                  {row.getVisibleCells().map((cell) => (
+                    <Td key={cell.id} className="px-4 pt-[14px] pb-[18px]">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </Td>
+                  ))}
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       </Card>
-
     </div>
   );
 }

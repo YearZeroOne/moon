@@ -16,7 +16,7 @@ export default function ProductCard({ productData }: any) {
   return (
     <Stack direction="column" gap="20px">
       <LinkBox as="article" maxW="sm" height="150px">
-        <Card id={category} height="150px">
+        <Card id={category} height="150px" width="150px">
           <Stack spacing="3">
             <CardBody>
               <Heading size="sm">
