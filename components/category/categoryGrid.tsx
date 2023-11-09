@@ -4,7 +4,7 @@ import { Box, Flex, SimpleGrid, Spacer, Stack } from '@chakra-ui/react';
 import CategoryCard from './categoryCard';
 import ProductCartCard from './productCartCard';
 
-export default function CategoryGrid({ categories }: any) {
+export default function CategoryGrid({ categories, cart }: any) {
   return (
       <Stack direction={['column', 'row']} spacing='10px'>
 
@@ -18,7 +18,7 @@ export default function CategoryGrid({ categories }: any) {
       <Box flex="1">
       <SimpleGrid columns={{ base: 1, md: 1, lg: 1,}} spacing={10}>
 
-        <ProductCartCard />
+        <ProductCartCard cartData={cart} />
         </SimpleGrid>
 
       </Box>

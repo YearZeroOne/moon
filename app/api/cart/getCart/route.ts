@@ -7,7 +7,7 @@ export async function GET() {
 
         const pb = new PocketBase(POCKET_BASE_URL);
 
-        const records = await pb.collection('Products').getFullList({
+        const records = await pb.collection('Cart').getFullList({
           sort: '-created',
           cache: 'no-store',
           expand: 'category'

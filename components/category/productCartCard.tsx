@@ -17,49 +17,38 @@ import {
   Tbody,
   Td,
   Tfoot,
+  Button,
 } from "@chakra-ui/react";
 
-export default function ProductCartCard() {
- 
-
+export default function ProductCartCard({ cartData }: any) {
+  console.log("hello", cartData);
   return (
     <Card>
-    <TableContainer>
-    <Table variant='simple'>
-      <TableCaption>Imperial to metric conversion factors</TableCaption>
-      <Thead>
-        <Tr>
-          <Th>To convert</Th>
-          <Th>into</Th>
-          <Th isNumeric>multiply by</Th>
-        </Tr>
-      </Thead>
-      <Tbody>
-        <Tr>
-          <Td>inches</Td>
-          <Td>millimetres (mm)</Td>
-          <Td isNumeric>25.4</Td>
-        </Tr>
-        <Tr>
-          <Td>feet</Td>
-          <Td>centimetres (cm)</Td>
-          <Td isNumeric>30.48</Td>
-        </Tr>
-        <Tr>
-          <Td>yards</Td>
-          <Td>metres (m)</Td>
-          <Td isNumeric>0.91444</Td>
-        </Tr>
-      </Tbody>
-      <Tfoot>
-        <Tr>
-          <Th>To convert</Th>
-          <Th>into</Th>
-          <Th isNumeric>multiply by</Th>
-        </Tr>
-      </Tfoot>
-    </Table>
-  </TableContainer>
-  </Card>
+      <TableContainer>
+        <Table variant="simple">
+          <TableCaption>Imperial to metric conversion factors</TableCaption>
+          <Thead>
+            <Tr>
+              <Th>Product</Th>
+              <Th>Quantity</Th>
+              <Th isNumeric>Price</Th>
+              <Th>Action</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {cartData?.map((data: any) => (
+              <Tr key={data.id}>
+                <Td>{data.expand.product.name}</Td>
+                <Td>{data.quantity}</Td>
+                <Td>{(data.expand.product.price * data.quantity).toFixed(2)}</Td> {/* assuming price needs to be fixed to 2 decimal places */}
+                <Td>
+                  <Button>X</Button>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
+    </Card>
   );
 }
